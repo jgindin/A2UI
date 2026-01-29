@@ -352,8 +352,8 @@ func ConvertSendA2UIToClientGenAIPartToA2APart(part *GenAIPart) []a2a.Part {
 		}
 
 		var finalParts []a2a.Part
+		log.Printf("Found %d messages. Creating individual DataParts.", len(jsonData))
 		for _, message := range jsonData {
-			log.Printf("Found %d messages. Creating individual DataParts.", len(jsonData))
 			if msgMap, ok := message.(map[string]interface{}); ok {
 				finalParts = append(finalParts, CreateA2UIPart(msgMap))
 			}

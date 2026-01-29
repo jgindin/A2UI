@@ -58,22 +58,14 @@ func CreateA2UIPart(a2uiData map[string]interface{}) a2a.Part {
 	}
 }
 
-// IsA2UIPart checks if an A2A Part contains A2UI data.
-func IsA2UIPart(part a2a.Part) bool {
-	dp, ok := part.(*a2a.DataPart)
-	if !ok {
-		return false
-	}
-	if dp.Metadata == nil {
-		return false
-	}
-	return dp.Metadata[MIMETypeKey] == MIMEType
-}
-
 // GetA2UIDataPart extracts the DataPart containing A2UI data from an A2A Part, if present.
 func GetA2UIDataPart(part a2a.Part) (*a2a.DataPart, error) {
-	if IsA2UIPart(part) {
-		return part.(*a2a.DataPart), nil
+	dp, ok := part.(*a2a.DataPart)
+	if !ok {
+		return nil, fmt.Errorf("part is not a DataPart")
+	}
+	if dp.Metadata != nil && dp.Metadata[MIMETypeKey] == MIMEType {
+		return dp, nil
 	}
 	return nil, fmt.Errorf("part is not an A2UI part")
 }

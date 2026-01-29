@@ -175,12 +175,7 @@ func main() {
 			// Debug: Log headers to check for X-A2A-Extensions
 			log.Printf("Received %s request to %s with Headers: %v", r.Method, r.URL.Path, r.Header)
 
-			// Manually inject extensions if present, handling canonical case (X-A2a-Extensions vs X-A2A-Extensions)
-			// This works around potential issues where a2asrv might expect exact casing or if NewJSONRPCHandler doesn't wrap it automatically.
 			exts := r.Header.Values("X-A2a-Extensions")
-			if len(exts) == 0 {
-				exts = r.Header.Values("X-A2A-Extensions")
-			}
 
 			if len(exts) > 0 {
 				log.Printf("Found A2UI Extensions in header: %v. Injecting into context.", exts)

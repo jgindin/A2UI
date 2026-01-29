@@ -176,8 +176,6 @@ func (e *RizzchartsAgentExecutor) Execute(ctx context.Context, reqCtx *a2asrv.Re
 			log.Printf("Executor: Part %d type: %T", i, p)
 			if txtPart, ok := p.(*a2a.TextPart); ok {
 				userText = txtPart.Text
-			} else if txtPart, ok := p.(a2a.TextPart); ok {
-				userText = txtPart.Text
 			}
 		}
 	}
@@ -204,11 +202,18 @@ func (e *RizzchartsAgentExecutor) Execute(ctx context.Context, reqCtx *a2asrv.Re
 		if pMap, ok := decl.Parameters["properties"].(map[string]interface{}); ok {
 			for name, pDef := range pMap {
 				if defMap, ok := pDef.(map[string]interface{}); ok {
-					s := &genai.Schema{Type: genai.TypeString} // Default to string
+					s := &genai.Schema{}
 					if typeStr, ok := defMap["type"].(string); ok {
-						if typeStr == "string" {
-							s.Type = genai.TypeString
+						switch typeStr {
+						case "number", "integer":
+							s.Type = genai.TypeNumber
+						case "boolean":
+							s.Type = genai.TypeBoolean
+						default:
+							s.Type = genai.TypeString // Default to string for unknown types
 						}
+					} else {
+						s.Type = genai.TypeString // Default to string if type is not specified
 					}
 					if desc, ok := defMap["description"].(string); ok {
 						s.Description = desc

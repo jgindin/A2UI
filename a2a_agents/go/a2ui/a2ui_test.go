@@ -33,7 +33,7 @@ func TestA2UIPartSerialization(t *testing.T) {
 
 	part := CreateA2UIPart(a2uiData)
 
-	if !IsA2UIPart(part) {
+	if dataPart, _ := GetA2UIDataPart(part); dataPart == nil {
 		t.Error("Should be identified as A2UI part")
 	}
 
@@ -56,7 +56,7 @@ func TestNonA2UIDataPart(t *testing.T) {
 		},
 	}
 
-	if IsA2UIPart(part) {
+	if dataPart, _ := GetA2UIDataPart(part); dataPart != nil {
 		t.Error("Should not be identified as A2UI part")
 	}
 
@@ -282,7 +282,7 @@ func TestConverter(t *testing.T) {
 	if len(a2aParts) != 1 {
 		t.Error("Expected 1 part")
 	}
-	if !IsA2UIPart(a2aParts[0]) {
+	if dataPart, _ := GetA2UIDataPart(a2aParts[0]); dataPart == nil {
 		t.Error("Expected A2UI part")
 	}
 

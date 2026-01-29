@@ -71,48 +71,8 @@ func (a *RizzchartsAgent) GetA2UISchema(ctx context.Context) (map[string]interfa
 	return a2ui.WrapAsJSONArray(schema)
 }
 
-// LoadExample loads an example JSON file and validates it against the A2UI schema.
-func (a *RizzchartsAgent) LoadExample(ctx context.Context, path string, a2uiSchema map[string]interface{}) (map[string]interface{}, error) {
-	// Assuming local file system for simplicity in this sample
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read example file %s: %w", path, err)
-	}
-
-	var exampleJSON interface{} // Can be map or slice
-	if err := json.Unmarshal(data, &exampleJSON); err != nil {
-		return nil, fmt.Errorf("failed to parse example JSON: %w", err)
-	}
-
-	// Validate against schema
-	schemaBytes, err := json.Marshal(a2uiSchema)
-	if err != nil {
-		return nil, err
-	}
-
-	c := jsonschema.NewCompiler()
-	if err := c.AddResource("schema.json", strings.NewReader(string(schemaBytes))); err != nil {
-		return nil, err
-	}
-	schema, err := c.Compile("schema.json")
-	if err != nil {
-		return nil, err
-	}
-
-	if err := schema.Validate(exampleJSON); err != nil {
-		return nil, fmt.Errorf("example validation failed: %w", err)
-	}
-
-	// Return as map if it's an object, or handle slice if needed.
-	// The Python code returns dict[str, Any], but the input can be a list.
-	// For A2UI examples which are arrays of messages, we usually process them as interface{}.
-	// Here we return interface{} to be flexible, but signature says map[string]interface{}.
-	// Let's adjust to interface{}.
-	return nil, nil // Placeholder, logic below
-}
-
-// LoadExampleGeneric loads and returns the example as interface{}
-func (a *RizzchartsAgent) LoadExampleGeneric(ctx context.Context, path string, a2uiSchema map[string]interface{}) (interface{}, error) {
+// LoadExample loads and returns the example as interface{}
+func (a *RizzchartsAgent) LoadExample(ctx context.Context, path string, a2uiSchema map[string]interface{}) (interface{}, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read example file %s: %w", path, err)
@@ -187,11 +147,11 @@ func (a *RizzchartsAgent) GetInstructions(ctx context.Context, state map[string]
 	}
 
 	var err error
-	mapExample, err = a.LoadExampleGeneric(ctx, filepath.Join(baseExampleDir, "map.json"), a2uiSchema)
+	mapExample, err = a.LoadExample(ctx, filepath.Join(baseExampleDir, "map.json"), a2uiSchema)
 	if err != nil {
 		return "", err
 	}
-	chartExample, err = a.LoadExampleGeneric(ctx, filepath.Join(baseExampleDir, "chart.json"), a2uiSchema)
+	chartExample, err = a.LoadExample(ctx, filepath.Join(baseExampleDir, "chart.json"), a2uiSchema)
 	if err != nil {
 		return "", err
 	}
