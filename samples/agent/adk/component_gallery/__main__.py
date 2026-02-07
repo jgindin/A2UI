@@ -1,3 +1,4 @@
+
 """Main entry point for the Component Gallery agent."""
 import logging
 import os
@@ -13,6 +14,7 @@ from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 from dotenv import load_dotenv
+
 
 from agent_executor import ComponentGalleryExecutor
 
